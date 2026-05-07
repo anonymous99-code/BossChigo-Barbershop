@@ -658,9 +658,21 @@ export default function App() {
               </div>
             ))}
           </div>
-          <div className="contact-btns">
+        <div className="contact-btns">
             <a href="https://wa.me/2348101349997" className="btn-gold" target="_blank" rel="noreferrer">💬 Chat on WhatsApp</a>
             <a href="tel:+2348101349997" className="btn-gold-outline">📞 +234 810 134 9997</a>
+          </div>
+          <div style={{ marginTop: "48px", border: "1px solid var(--border)", overflow: "hidden", lineHeight: 0 }}>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15853.375846874325!2d3.3460606!3d6.604108999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b9229c06efb83%3A0x9537f84505b00dc5!2zQk9TU0NISUdPIChCQVJCRVIpIFNIT1Ag8J-SiPCfkojwn5KI!5e0!3m2!1sen!2sng!4v1778157648127!5m2!1sen!2sng"
+              width="100%"
+              height="400"
+              style={{ border: 0, display: "block" }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="BOSSCHIGO Barbershop Location"
+            />
           </div>
         </div>
       </section>
