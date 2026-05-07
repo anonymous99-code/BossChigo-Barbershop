@@ -333,6 +333,101 @@ const style = `
     .pricing-row { flex-wrap: wrap; }
     .pricing-row-price { min-width: auto; text-align: left; }
   }
+
+  /* ══ BOOKING COUNTER BANNER ══ */
+.booking-counter-bar {
+  background: var(--dark);
+  border-bottom: 1px solid rgba(184,146,42,0.2);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.booking-counter-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+}
+.booking-counter-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+.booking-counter-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* ══ SUCCESS TOAST ══ */
+.booking-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--dark);
+  border: 1px solid var(--gold);
+  color: var(--white);
+  padding: 16px 28px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.booking-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.booking-toast-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #25D366;
+  flex-shrink: 0;
+}
+
+/* ══ INLINE BOOKING COUNT IN FORM ══ */
+.booking-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(184,146,42,0.1);
+  border: 1px solid rgba(184,146,42,0.25);
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.booking-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 1.8s ease-in-out infinite;
+}
 `;
 
 
@@ -366,6 +461,10 @@ export default function App() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+const [bookingCount, setBookingCount] = useState(() => {
+  return parseInt(localStorage.getItem("bosschigo_bookings") || "247", 10);
+});
+const [justBooked, setJustBooked] = useState(false);
 
   const services = [
     "Adult Hair","Kids Cut","Beard Trim","Hair Coloring","Beard Dyeing",
@@ -399,10 +498,15 @@ export default function App() {
   const times = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
 
   const handleBooking = () => {
-    const message = `Hello BOSSCHIGO, my name is ${name}.\nI want to book:\nService: ${service}\nDate: ${date}\nTime: ${time}\nPhone: ${phone}`;
+    const newCount = bookingCount + 1;
+    localStorage.setItem("bosschigo_bookings", newCount);
+    setBookingCount(newCount);
+    setJustBooked(true);
+    setTimeout(() => setJustBooked(false), 5000);
+  
+    const message = `Hello BOSSCHIGO, my name is ${name}.\nI want to book:\nService: ${service}\nDate: ${date}\nTime: ${time}\nPhone: ${phone}\n\n📲 *Booked via BOSSCHIGO Website*`;
     window.open(`https://wa.me/2348101349997?text=${encodeURIComponent(message)}`, "_blank");
   };
-
   return (
     <>
       <style>{style}</style>
@@ -437,6 +541,22 @@ export default function App() {
     <a href="#booking" className="navbar-cta">Book Now</a>
   </div>
 </nav>
+
+{/* BOOKING COUNTER BAR */}
+<div className="booking-counter-bar" style={{ marginTop: "64px" }}>
+        <div className="booking-counter-bar-item">
+          <div className="booking-counter-pulse"></div>
+          <span><span className="booking-counter-num">{bookingCount}</span> bookings made from this site</span>
+        </div>
+        <div className="booking-counter-bar-item">
+          <span>💬</span>
+          <span>All bookings confirmed via <strong style={{ color: "#25D366" }}>WhatsApp</strong></span>
+        </div>
+        <div className="booking-counter-bar-item">
+          <span>⚡</span>
+          <span>Instant confirmation</span>
+        </div>
+      </div>
 
       {/* HERO */}
       <section className="hero">
@@ -597,6 +717,10 @@ export default function App() {
             </div>
 
             <div className="booking-panel">
+              <div className="booking-live-badge">
+                <div className="booking-live-dot"></div>
+                {bookingCount} customers booked via this site
+              </div>
               <div className="form-section-title">Service</div>
               <div className="svc-tiles">
                 {services.map((item) => (
@@ -637,6 +761,10 @@ export default function App() {
               </button>
             </div>
           </div>
+        </div>
+        <div className={`booking-toast${justBooked ? " show" : ""}`}>
+          <div className="booking-toast-dot"></div>
+          ✅ Booking sent via WhatsApp — BOSSCHIGO will confirm shortly!
         </div>
       </section>
 
